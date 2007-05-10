@@ -10,5 +10,5 @@ setup(name='wxglvideo',
       author_email='strawman@astraw.com',
       license='BSD',
       packages = ['wxglvideo'],
-      install_requires = ['imops>=0.3.dev275'],
+      install_requires = ['imops>=0.3.dev1'],
       )
