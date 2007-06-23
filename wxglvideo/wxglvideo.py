@@ -5,20 +5,19 @@ import numpy as nx
 
 import imops
 
-from wxPython.wx import *
-from wxPython.glcanvas import *
-from OpenGL.GL import *
+import wx
+import wx.glcanvas
 import OpenGL.GL as gl
 import warnings
 
-class DynamicImageCanvas(wxGLCanvas):
+class DynamicImageCanvas(wx.glcanvas.GLCanvas):
     def __init__(self, *args, **kw):
-        wxGLCanvas.__init__(*(self,)+args, **kw)
+        wx.glcanvas.GLCanvas.__init__(*(self,)+args, **kw)
         self.init = False
-        EVT_ERASE_BACKGROUND(self, self.OnEraseBackground)
-        EVT_SIZE(self, self.OnSize)
-        EVT_PAINT(self, self.OnPaint)
-        EVT_IDLE(self, self.OnDraw)
+        wx.EVT_ERASE_BACKGROUND(self, self.OnEraseBackground)
+        wx.EVT_SIZE(self, self.OnSize)
+        wx.EVT_PAINT(self, self.OnPaint)
+        wx.EVT_IDLE(self, self.OnDraw)
         self._gl_tex_info_dict = {}
         self.do_clipping = False
         self.rotate_180 = False
@@ -39,6 +38,7 @@ class DynamicImageCanvas(wxGLCanvas):
     def set_clipping(self, value):
         if value:
             warnings.warn('clipping disabled for performance reasons')
+            return
         self.do_clipping = value
 
     def set_rotate_180(self, value):
@@ -84,7 +84,7 @@ class DynamicImageCanvas(wxGLCanvas):
             glViewport(0, 0, size.width, size.height)
 
     def OnPaint(self, event):
-        dc = wxPaintDC(self)
+        dc = wx.PaintDC(self)
         self.SetCurrent()
         if not self.init:
             self.InitGL()
@@ -96,18 +96,18 @@ class DynamicImageCanvas(wxGLCanvas):
         self.gl_renderer = gl.glGetString(gl.GL_RENDERER)
         self.gl_version = gl.glGetString(gl.GL_VERSION)
         
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        glOrtho(0,1,0,1,-1,1)
-        glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
-        glEnable( GL_BLEND )
-        glClearColor(0.0, 1.0, 0.0, 0.0) # green
-        glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA )
-        glDisable(GL_DEPTH_TEST);
-        glColor4f(1.0,1.0,1.0,1.0)
-        glEnable( GL_POINT_SMOOTH )
-        glPointSize(5)
+        gl.glMatrixMode(gl.GL_PROJECTION)
+        gl.glLoadIdentity()
+        gl.glOrtho(0,1,0,1,-1,1)
+        gl.glMatrixMode(gl.GL_MODELVIEW)
+        gl.glLoadIdentity()
+        gl.glEnable( gl.GL_BLEND )
+        gl.glClearColor(0.0, 1.0, 0.0, 0.0) # green
+        gl.glBlendFunc( gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA )
+        gl.glDisable(gl.GL_DEPTH_TEST);
+        gl.glColor4f(1.0,1.0,1.0,1.0)
+        gl.glEnable( gl.GL_POINT_SMOOTH )
+        gl.glPointSize(5)
         
     def create_texture_object(self,id_val,image):
         def next_power_of_2(f):
@@ -133,17 +133,17 @@ class DynamicImageCanvas(wxGLCanvas):
                 buffer[0:height,0:width,1] = mask
                 raise RuntimeError('clipping should be disabled, how did we get here?')
                 
-            internal_format = GL_LUMINANCE_ALPHA # keep alpha channel for clipping
-            data_format = GL_LUMINANCE
+            internal_format = gl.GL_LUMINANCE_ALPHA # keep alpha channel for clipping
+            data_format = gl.GL_LUMINANCE
         else:
             buffer = nx.zeros( (height_pow2,width_pow2,image.shape[2]), dtype=image.dtype )
             buffer[0:height, 0:width, :] = image
-            internal_format = GL_RGB
-            data_format = GL_RGB
+            internal_format = gl.GL_RGB
+            data_format = gl.GL_RGB
 
         raw_data = buffer.tostring()
 
-        tex_id = glGenTextures(1)
+        tex_id = gl.glGenTextures(1)
 
         gl_tex_xy_alloc = width_pow2, height_pow2
         gl_tex_xyfrac = width/float(width_pow2),  height/float(height_pow2)
@@ -152,22 +152,20 @@ class DynamicImageCanvas(wxGLCanvas):
         self._gl_tex_info_dict[id_val] = (tex_id, gl_tex_xy_alloc, gl_tex_xyfrac,
                                           widthheight, internal_format, data_format)
 
-        glBindTexture(GL_TEXTURE_2D, tex_id)
-        glEnable(GL_TEXTURE_2D)
-        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
-        glPixelStorei(GL_UNPACK_ALIGNMENT,1)
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-##        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-##        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-        glTexImage2D(GL_TEXTURE_2D, # target
+        gl.glBindTexture(gl.GL_TEXTURE_2D, tex_id)
+        gl.glEnable(gl.GL_TEXTURE_2D)
+        gl.glTexEnvi(gl.GL_TEXTURE_ENV, gl.GL_TEXTURE_ENV_MODE, gl.GL_MODULATE)
+        gl.glPixelStorei(gl.GL_UNPACK_ALIGNMENT,1)
+        gl.glTexParameterf(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MAG_FILTER, gl.GL_LINEAR)
+        gl.glTexParameterf(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_LINEAR)
+        gl.glTexImage2D(gl.GL_TEXTURE_2D, # target
                      0, #mipmap_level
                      internal_format,
                      width_pow2,
                      height_pow2,
                      0, #border,
                      data_format,
-                     GL_UNSIGNED_BYTE, #data_type,
+                     gl.GL_UNSIGNED_BYTE, #data_type,
                      raw_data)
 
     def update_image(self,
@@ -205,7 +203,7 @@ class DynamicImageCanvas(wxGLCanvas):
         else:
             if len(image.shape) == 3:
                 # color image
-                this_data_format = GL_RGB
+                this_data_format = gl.GL_RGB
                 buffer_string = image.tostring()
             else:
                 # XXX allocating new memory...
@@ -217,26 +215,26 @@ class DynamicImageCanvas(wxGLCanvas):
                     mask = nx.choose(clipped, (255, 200) ).astype(nx.uint8) # alpha for transparency
                     self._buffer[:,:,0] = image
                     self._buffer[:,:,1] = mask
-                    this_data_format = GL_LUMINANCE_ALPHA
+                    this_data_format = gl.GL_LUMINANCE_ALPHA
                     buffer_string = self._buffer.tostring()
                 else:
-                    this_data_format = GL_LUMINANCE
+                    this_data_format = gl.GL_LUMINANCE
                     buffer_string = image.tostring()
                     
             if this_data_format != data_format:
                 raise ValueError('data format changed (old %s, new %s, GL_RGB %d, GL_LUMINANCE %d, GL_LUMINANCE_ALPHA %d)!'%(
-                    data_format,this_data_format, GL_RGB, GL_LUMINANCE, GL_LUMINANCE_ALPHA)) # probably wxglvideo internal error
+                    data_format,this_data_format, gl.GL_RGB, gl.GL_LUMINANCE, gl.GL_LUMINANCE_ALPHA)) # probably wxgl.glvideo internal error
             
             self._gl_tex_xyfrac = width/float(max_x),  height/float(max_y)
-            glBindTexture(GL_TEXTURE_2D,tex_id)
-            glTexSubImage2D(GL_TEXTURE_2D, #target,
+            gl.glBindTexture(gl.GL_TEXTURE_2D,tex_id)
+            gl.glTexSubImage2D(gl.GL_TEXTURE_2D, #target,
                             0, #mipmap_level,
                             xoffset, #x_offset,
                             yoffset, #y_offset,
                             width,
                             height,
                             this_data_format,
-                            GL_UNSIGNED_BYTE, #data_type,
+                            gl.GL_UNSIGNED_BYTE, #data_type,
                             buffer_string)
             self.extra_points_linesegs[id_val] = ([],[])
             
@@ -264,20 +262,18 @@ class DynamicImageCanvas(wxGLCanvas):
     def OnDraw(self,*dummy_arg):
         N = len(self._gl_tex_info_dict)
         if N == 0:
-            glClearColor(0.0, 0.0, 0.0, 0.0) # black
-            glColor4f(0.0,1.0,0.0,1.0) # green
-            glClear(GL_COLOR_BUFFER_BIT)
-            glDisable(GL_TEXTURE_2D)
-            glDisable(GL_BLEND)
-            glRasterPos3f(.02,.02,0)
-##            for char in 'no image sources':
-##                glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18,ord(char))
-            glEnable(GL_TEXTURE_2D)
-            glEnable(GL_BLEND)
-            glClearColor(0.0, 1.0, 0.0, 0.0) # green
-            glColor4f(1.0,1.0,1.0,1.0) # white
+            gl.glClearColor(0.0, 0.0, 0.0, 0.0) # black
+            gl.glColor4f(0.0,1.0,0.0,1.0) # green
+            gl.glClear(gl.GL_COLOR_BUFFER_BIT)
+            gl.glDisable(gl.GL_TEXTURE_2D)
+            gl.glDisable(gl.GL_BLEND)
+            gl.glRasterPos3f(.02,.02,0)
+            gl.glEnable(gl.GL_TEXTURE_2D)
+            gl.glEnable(gl.GL_BLEND)
+            gl.glClearColor(0.0, 1.0, 0.0, 0.0) # green
+            gl.glColor4f(1.0,1.0,1.0,1.0) # white
         else:
-            glClear(GL_COLOR_BUFFER_BIT)
+            gl.glClear(gl.GL_COLOR_BUFFER_BIT)
             ids = self._gl_tex_info_dict.keys()
             ids.sort()
             size = self.GetClientSize()
@@ -298,37 +294,37 @@ class DynamicImageCanvas(wxGLCanvas):
 
                 xx,yy = gl_tex_xyfrac
 
-                glBindTexture(GL_TEXTURE_2D,tex_id)
+                gl.glBindTexture(gl.GL_TEXTURE_2D,tex_id)
                 if self.flip_LR:
                     left,right=right,left
                 if not self.rotate_180:
-                    glBegin(GL_QUADS)
-                    glTexCoord2f( 0, yy) # texture is flipped upside down to fix OpenGL<->na
-                    glVertex2f( left, bottom)
+                    gl.glBegin(gl.GL_QUADS)
+                    gl.glTexCoord2f( 0, yy) # texture is flipped upside down to fix OpenGL<->na
+                    gl.glVertex2f( left, bottom)
 
-                    glTexCoord2f( xx, yy)
-                    glVertex2f( right, bottom)
+                    gl.glTexCoord2f( xx, yy)
+                    gl.glVertex2f( right, bottom)
 
-                    glTexCoord2f( xx, 0)
-                    glVertex2f( right, top)
+                    gl.glTexCoord2f( xx, 0)
+                    gl.glVertex2f( right, top)
 
-                    glTexCoord2f( 0, 0)
-                    glVertex2f( left,top)
-                    glEnd()
+                    gl.glTexCoord2f( 0, 0)
+                    gl.glVertex2f( left,top)
+                    gl.glEnd()
                 else:
-                    glBegin(GL_QUADS)
-                    glTexCoord2f( xx, 0)
-                    glVertex2f( left, bottom)
+                    gl.glBegin(gl.GL_QUADS)
+                    gl.glTexCoord2f( xx, 0)
+                    gl.glVertex2f( left, bottom)
 
-                    glTexCoord2f( 0, 0)
-                    glVertex2f( right, bottom)
+                    gl.glTexCoord2f( 0, 0)
+                    gl.glVertex2f( right, bottom)
 
-                    glTexCoord2f( 0, yy)
-                    glVertex2f( right, top)
+                    gl.glTexCoord2f( 0, yy)
+                    gl.glVertex2f( right, top)
 
-                    glTexCoord2f( xx, yy)
-                    glVertex2f( left,top)
-                    glEnd()
+                    gl.glTexCoord2f( xx, yy)
+                    gl.glVertex2f( left,top)
+                    gl.glEnd()
 
                 xg=right-left
                 xo=left
@@ -340,20 +336,20 @@ class DynamicImageCanvas(wxGLCanvas):
 
                 points,linesegs = self.extra_points_linesegs.get(ids[i],([],[]))
 
-                glDisable(GL_TEXTURE_2D)
-                glColor4f(0.0,1.0,0.0,1.0) # green point
+                gl.glDisable(gl.GL_TEXTURE_2D)
+                gl.glColor4f(0.0,1.0,0.0,1.0) # green point
 
-                glBegin(GL_POINTS)
+                gl.glBegin(gl.GL_POINTS)
                 for pt in points:
                     if self.rotate_180:
                         pt = width-pt[0], height-pt[1]
                     
                     x = pt[0]/width*xg+xo
                     y = (height-pt[1])/height*yg+yo
-                    glVertex2f(x,y)
-                glEnd()
+                    gl.glVertex2f(x,y)
+                gl.glEnd()
 
-                glBegin(GL_LINES)
+                gl.glBegin(gl.GL_LINES)
                 for L in linesegs:
                     if self.rotate_180:
                         L = width-L[0], height-L[1], width-L[2], height-L[3]
@@ -361,31 +357,31 @@ class DynamicImageCanvas(wxGLCanvas):
                     y0 = (height-L[1])/height*yg+yo
                     x1 = L[2]/width*xg+xo
                     y1 = (height-L[3])/height*yg+yo
-                    glVertex2f(x0,y0)
-                    glVertex2f(x1,y1)
-                glEnd()
+                    gl.glVertex2f(x0,y0)
+                    gl.glVertex2f(x1,y1)
+                gl.glEnd()
 
-                glColor4f(1.0,1.0,1.0,1.0)                        
-                glEnable(GL_TEXTURE_2D)
+                gl.glColor4f(1.0,1.0,1.0,1.0)                        
+                gl.glEnable(gl.GL_TEXTURE_2D)
                     
                 if self.do_draw_points:
                     # draw points if needed
                     draw_points = self.draw_points.get(ids[i],[])
                     
-                    glDisable(GL_TEXTURE_2D)
-                    glColor4f(0.0,1.0,0.0,1.0) # green point
-                    glBegin(GL_POINTS)
+                    gl.glDisable(gl.GL_TEXTURE_2D)
+                    gl.glColor4f(0.0,1.0,0.0,1.0) # green point
+                    gl.glBegin(gl.GL_POINTS)
 
                     for pt in draw_points:
                         if not pt[9]: # found_anything is false
                             continue
                         x = pt[0]/width*xg+xo
                         y = (height-pt[1])/height*yg+yo
-                        glVertex2f(x,y)
+                        gl.glVertex2f(x,y)
                         
-                    glEnd()
-                    glColor4f(1.0,1.0,1.0,1.0)                        
-                    glEnable(GL_TEXTURE_2D)
+                    gl.glEnd()
+                    gl.glColor4f(1.0,1.0,1.0,1.0)                        
+                    gl.glEnable(gl.GL_TEXTURE_2D)
 
                     for draw_point in draw_points:
                         found_anything = draw_point[9]
@@ -432,39 +428,39 @@ class DynamicImageCanvas(wxGLCanvas):
                         y1 = (height-y1)/height*yg+yo
                         y2 = (height-y2)/height*yg+yo
 
-                        glDisable(GL_TEXTURE_2D)
-                        glColor4f(0.0,1.0,0.0,1.0) # green line
-                        glBegin(GL_LINES)
-                        glVertex2f(x1,y1)
-                        glVertex2f(x2,y2)
-                        glEnd()
-                        glColor4f(1.0,1.0,1.0,1.0)                        
-                        glEnable(GL_TEXTURE_2D)
+                        gl.glDisable(gl.GL_TEXTURE_2D)
+                        gl.glColor4f(0.0,1.0,0.0,1.0) # green line
+                        gl.glBegin(gl.GL_LINES)
+                        gl.glVertex2f(x1,y1)
+                        gl.glVertex2f(x2,y2)
+                        gl.glEnd()
+                        gl.glColor4f(1.0,1.0,1.0,1.0)                        
+                        gl.glEnable(gl.GL_TEXTURE_2D)
 
                     # reconstructed points
                     draw_points, draw_lines = self.reconstructed_points.get(ids[i],([],[]))
 
                     # draw points
-                    glDisable(GL_TEXTURE_2D)
-                    glColor4f(1.0,0.0,0.0,0.5) # red points
-                    glBegin(GL_POINTS)
+                    gl.glDisable(gl.GL_TEXTURE_2D)
+                    gl.glColor4f(1.0,0.0,0.0,0.5) # red points
+                    gl.glBegin(gl.GL_POINTS)
 
                     for pt in draw_points:
                         if pt[0] < 0 or pt[0] >= width or pt[1] < 0 or pt[1] >= height:
                             continue
                         x = pt[0]/width*xg+xo
                         y = (height-pt[1])/height*yg+yo
-                        glVertex2f(x,y)
+                        gl.glVertex2f(x,y)
                         
-                    glEnd()
-                    glColor4f(1.0,1.0,1.0,1.0)                        
-                    glEnable(GL_TEXTURE_2D)
+                    gl.glEnd()
+                    gl.glColor4f(1.0,1.0,1.0,1.0)                        
+                    gl.glEnable(gl.GL_TEXTURE_2D)
 
                     # draw lines
 
-                    glDisable(GL_TEXTURE_2D)
-                    glColor4f(1.0,0.0,0.0,0.5) # red lines
-                    glBegin(GL_LINES)
+                    gl.glDisable(gl.GL_TEXTURE_2D)
+                    gl.glColor4f(1.0,0.0,0.0,0.5) # red lines
+                    gl.glBegin(gl.GL_LINES)
 
                     for L in draw_lines:
                         pt=[0,0]
@@ -478,7 +474,7 @@ class DynamicImageCanvas(wxGLCanvas):
                         
                         x = pt[0]/width*xg+xo
                         y = (height-pt[1])/height*yg+yo
-                        glVertex2f(x,y)
+                        gl.glVertex2f(x,y)
 
                         # at x=width-1:
                         pt[0] = width-1
@@ -486,11 +482,11 @@ class DynamicImageCanvas(wxGLCanvas):
                         
                         x = pt[0]/width*xg+xo
                         y = (height-pt[1])/height*yg+yo
-                        glVertex2f(x,y)
+                        gl.glVertex2f(x,y)
 
-                    glEnd()
-                    glColor4f(1.0,1.0,1.0,1.0)                        
-                    glEnable(GL_TEXTURE_2D)
+                    gl.glEnd()
+                    gl.glColor4f(1.0,1.0,1.0,1.0)                        
+                    gl.glEnable(gl.GL_TEXTURE_2D)
 
                 if ids[i] in self.lbrt:
                     # draw ROI
@@ -510,17 +506,17 @@ class DynamicImageCanvas(wxGLCanvas):
                     if (abs(r-l) + abs(t-b)) > (2-eps):
                         # don't draw ROI box if ROI is whole image
                         continue
-                    glDisable(GL_TEXTURE_2D)
-                    glColor4f(0.0,1.0,0.0,1.0)
-                    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
-                    glBegin(GL_QUADS)
-                    glVertex2f(l,b)
-                    glVertex2f(l,t)
-                    glVertex2f(r,t)
-                    glVertex2f(r,b)
-                    glEnd()
-                    glColor4f(1.0,1.0,1.0,1.0)
-                    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL)
-                    glEnable(GL_TEXTURE_2D)
+                    gl.glDisable(gl.GL_TEXTURE_2D)
+                    gl.glColor4f(0.0,1.0,0.0,1.0)
+                    gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_LINE)
+                    gl.glBegin(gl.GL_QUADS)
+                    gl.glVertex2f(l,b)
+                    gl.glVertex2f(l,t)
+                    gl.glVertex2f(r,t)
+                    gl.glVertex2f(r,b)
+                    gl.glEnd()
+                    gl.glColor4f(1.0,1.0,1.0,1.0)
+                    gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_FILL)
+                    gl.glEnable(gl.GL_TEXTURE_2D)
         
         self.SwapBuffers()
