@@ -81,7 +81,7 @@ class DynamicImageCanvas(wx.glcanvas.GLCanvas):
         size = self.GetClientSize()
         if self.GetContext():
             self.SetCurrent()
-            glViewport(0, 0, size.width, size.height)
+            gl.glViewport(0, 0, size.width, size.height)
 
     def OnPaint(self, event):
         dc = wx.PaintDC(self)
