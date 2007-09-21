@@ -58,7 +58,7 @@ class DynamicImageCanvas(wx.glcanvas.GLCanvas):
 
     def delete_image(self,id_val):
         tex_id, gl_tex_xy_alloc, gl_tex_xyfrac, widthheight, internal_format, data_format = self._gl_tex_info_dict[id_val]
-        glDeleteTextures( tex_id )
+        gl.DeleteTextures( [tex_id] )
         del self._gl_tex_info_dict[id_val]
 
     def set_draw_points(self,id_val,points):
