@@ -1,10 +1,13 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
-setup(name='wxglvideo',
-      version='0.5.0',
+setup(name='motmot.wxglvideo',
+      description='wx/OpenGL viewer of image sequences (part of the motmot camera packages)',
+      version='0.6.0',
       author='Andrew Straw',
       author_email='strawman@astraw.com',
+      url='http://code.astraw.com/projects/motmot',
       license='BSD',
-      packages = ['wxglvideo'],
-      install_requires = ['imops>=0.3.dev1'],
+      zip_safe=True,
+      packages = find_packages(),
+      namespace_packages = ['motmot']
       )
