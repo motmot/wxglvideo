@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resource>
+  <object class="wxPanel" name="DEMO_PANEL">
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxPanel" name="MAIN_DISPLAY_PANEL"/>
+        <option>1</option>
+        <flag>wxALL|wxEXPAND</flag>
+        <border>5</border>
+        <minsize>320,240</minsize>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>Data:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxChoice" name="COLOR">
+              <content>
+                <item>multi</item>
+                <item>red</item>
+              </content>
+              <selection>0</selection>
+            </object>
+            <option>1</option>
+          </object>
+          <object class="sizeritem">
+            <object class="wxChoice" name="WHICH">
+              <content>
+                <item>all</item>
+                <item>bottom</item>
+                <item>left</item>
+              </content>
+              <selection>0</selection>
+            </object>
+            <option>1</option>
+          </object>
+        </object>
+        <flag>wxEXPAND</flag>
+      </object>
+      <object class="sizeritem">
+        <object class="wxBoxSizer">
+          <orient>wxHORIZONTAL</orient>
+          <object class="sizeritem">
+            <object class="wxStaticText">
+              <label>View:</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxCheckBox" name="FLIPLR">
+              <label>Flip L/R</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxCheckBox" name="ROTATE180">
+              <label>Rotate 180</label>
+            </object>
+          </object>
+          <object class="sizeritem">
+            <object class="wxCheckBox" name="FULLCANVAS">
+              <label>Full canvas</label>
+              <checked>1</checked>
+            </object>
+          </object>
+        </object>
+      </object>
+    </object>
+  </object>
+  <object class="wxFrame" name="DEMO_FRAME">
+    <title></title>
+    <object class="wxBoxSizer">
+      <orient>wxVERTICAL</orient>
+      <object class="sizeritem">
+        <object class="wxPanel" name="TARGET_PANEL"/>
+        <option>1</option>
+        <flag>wxEXPAND</flag>
+        <minsize>320,240</minsize>
+      </object>
+      <object class="sizeritem">
+        <object class="wxButton" name="ADD_DISPLAY">
+          <label>Add display</label>
+        </object>
+        <flag>wxALIGN_CENTRE</flag>
+      </object>
+    </object>
+  </object>
+</resource>
