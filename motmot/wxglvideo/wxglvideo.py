@@ -4,7 +4,7 @@ import wx.glcanvas
 import pyglet.gl as gl
 import pyglet.gl
 
-# XXX TODO: 
+# XXX TODO:
 #  check off-by-one error in width/coordinate settings (e.g. glOrtho call)
 #  allow sharing of OpenGL context between instances
 
@@ -74,7 +74,7 @@ class DynamicImageCanvas(wx.glcanvas.GLCanvas):
         gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
         self._reset_projection()
         self.extra_initgl()
-    
+
     def extra_initgl(self):
         pass
 
@@ -114,7 +114,7 @@ class DynamicImageCanvas(wx.glcanvas.GLCanvas):
     def new_image(self, image):
         self._pygimage = image
         self._reset_projection() # always trigger re-calculation of projection - necessary if self.fullcanvas
-            
+
     def update_image(self, image):
         self.wxcontext.SetCurrent()
         self._pygimage.view_new_array( image )
