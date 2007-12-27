@@ -30,7 +30,7 @@ class DemoApp(wx.App):
         wx.EVT_BUTTON(ctrl, ctrl.GetId(), self.OnAddDisplay)
 
         wx.EVT_CLOSE(self.frame, self.OnWindowClose)
-        
+
         self.gl_canvases = []
         ID_Timer = wx.NewId()
         self.timer = wx.Timer(self, ID_Timer)
@@ -55,7 +55,14 @@ class DemoApp(wx.App):
         box = wx.BoxSizer(wx.VERTICAL)
         main_display_panel.SetSizer(box)
 
-        gl_canvas = vid.DynamicImageCanvas(main_display_panel,-1)
+        # The Hide()/Show() pair prevent a gtk_widget_set_colormap()
+        # GTK_WIDGET_REALIZED warning.
+
+        main_display_panel.Hide()
+        try:
+            gl_canvas = vid.DynamicImageCanvas(main_display_panel,-1)
+        finally:
+            main_display_panel.Show()
 
         box.Add(gl_canvas,1,wx.EXPAND)
 
@@ -64,12 +71,12 @@ class DemoApp(wx.App):
         ctrl = xrc.XRCCTRL(new_panel,"FLIPLR")
         self.widgets2canv[ctrl]=gl_canvas
         wx.EVT_CHECKBOX(ctrl, ctrl.GetId(), self.OnFlipLR)
-        gl_canvas.set_flip_lr(ctrl.IsChecked())        
+        gl_canvas.set_flip_lr(ctrl.IsChecked())
 
         ctrl = xrc.XRCCTRL(new_panel,"ROTATE180")
         self.widgets2canv[ctrl]=gl_canvas
         wx.EVT_CHECKBOX(ctrl, ctrl.GetId(), self.OnRotate180)
-        gl_canvas.set_rotate_180(ctrl.IsChecked())        
+        gl_canvas.set_rotate_180(ctrl.IsChecked())
 
         ctrl = xrc.XRCCTRL(new_panel,"FULLCANVAS")
         self.widgets2canv[ctrl]=gl_canvas
@@ -86,7 +93,7 @@ class DemoApp(wx.App):
         ni = numpy.random.uniform( 0, 255, SIZE).astype(numpy.uint8)
         pygim = ArrayInterfaceImage(ni,allow_copy=False)
         gl_canvas.new_image(pygim)
-        
+
     def _event2canvas(self,event):
         widget = event.GetEventObject()
         gl_canvas = self.widgets2canv[widget]
@@ -94,15 +101,15 @@ class DemoApp(wx.App):
 
     def OnFlipLR(self,event):
         gl_canvas = self._event2canvas(event)
-        gl_canvas.set_flip_lr(event.GetEventObject().IsChecked())        
+        gl_canvas.set_flip_lr(event.GetEventObject().IsChecked())
 
     def OnRotate180(self,event):
         gl_canvas = self._event2canvas(event)
-        gl_canvas.set_rotate_180(event.GetEventObject().IsChecked())        
+        gl_canvas.set_rotate_180(event.GetEventObject().IsChecked())
 
     def OnFullcanvas(self,event):
         gl_canvas = self._event2canvas(event)
-        gl_canvas.set_fullcanvas(event.GetEventObject().IsChecked())        
+        gl_canvas.set_fullcanvas(event.GetEventObject().IsChecked())
 
     def OnTimer(self, event):
         for (gl_canvas,Color,Which) in self.gl_canvases:
@@ -127,7 +134,7 @@ class DemoApp(wx.App):
 
             gl_canvas.update_image( my_numpy_array )
             gl_canvas.OnDraw()
-                                                 
+
 def main():
     import os
     if int(os.environ.get('NO_REDIRECT','0')):
