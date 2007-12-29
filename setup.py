@@ -9,5 +9,6 @@ setup(name='motmot.wxglvideo',
       license='BSD',
       zip_safe=True,
       packages = find_packages(),
-      namespace_packages = ['motmot']
+      namespace_packages = ['motmot'],
+      package_data = {'motmot.wxglvideo':['demo.xrc']},
       )
