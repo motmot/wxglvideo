@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(name='motmot.wxglvideo',
       description='wx/OpenGL viewer of image sequences (part of the motmot camera packages)',
-      version='0.6.0',
+      version='0.6.1',
       author='Andrew Straw',
       author_email='strawman@astraw.com',
       url='http://code.astraw.com/projects/motmot',
