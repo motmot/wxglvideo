@@ -133,7 +133,7 @@ class DemoApp(wx.App):
                 raise ValueError('')
 
             gl_canvas.update_image( my_numpy_array )
-            gl_canvas.OnDraw()
+            #gl_canvas.OnDraw()
 
 def main():
     import os
