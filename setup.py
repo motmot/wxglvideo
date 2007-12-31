@@ -11,4 +11,6 @@ setup(name='motmot.wxglvideo',
       packages = find_packages(),
       namespace_packages = ['motmot'],
       package_data = {'motmot.wxglvideo':['demo.xrc']},
+      entry_points = {'gui_scripts': ['wxglvideo_demo=motmot.wxglvideo.demo:main',
+                                      ]}
       )
