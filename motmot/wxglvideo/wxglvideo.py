@@ -16,7 +16,7 @@ class PygWxContext:
         self.glcanvas = glcanvas
         pyglet.gl._contexts.append( self )
 
-    def SetCurrent(self, really_this_one=False):
+    def SetCurrent(self):
         pyglet.gl._current_context = self
         self.glcanvas.SetCurrent()
 
