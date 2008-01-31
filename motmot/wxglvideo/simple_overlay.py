@@ -4,6 +4,7 @@ import pkg_resources
 import numpy
 import motmot.imops.imops as imops
 import pyglet.gl as gl
+import warnings
 
 from pygarrayimage.arrayimage import ArrayInterfaceImage
 
@@ -22,7 +23,6 @@ class PointDisplayCanvas( vid.DynamicImageCanvas ):
         gl.glColor4f(0.0,1.0,0.0,1.0) # green point
 
         if point_colors is not None:
-            import warnings
             warnings.warn('point_colors not implemented - all your points will be green for now')
 
         if points is not None:
@@ -62,6 +62,7 @@ class DynamicImageCanvas(wx.Panel):
         self.flip_lr = False
 
         self.children = {}
+        self.children_full_roi_arr = {}
         self.lbrt = {}
 
         self.box = wx.BoxSizer(wx.HORIZONTAL)
@@ -129,9 +130,25 @@ class DynamicImageCanvas(wx.Panel):
             # The line gives us:
             #  Gtk-CRITICAL **: gtk_widget_set_colormap: assertion `!GTK_WIDGET_REALIZED (widget)' failed
             self._new_child(id_val,image)
+            self.children_full_roi_arr[id_val] = image
         else:
             child = self.children[id_val]
+            previous_image = self.children_full_roi_arr[id_val]
+            if not image.shape == previous_image.shape:
+                fullh,fullw = previous_image.shape
+                h,w = image.shape
+                warnings.warn('use of ROI forces copy operation')
+                # Current pyglet (v1.0) seems to assume width of image
+                # to blit is width of full texture, so here we make a
+                # full-size image rather than blitting the sub image.
+                newim = numpy.array(previous_image,copy=True)
+                yoffset = fullh-yoffset-h
+                xoffset = fullw-xoffset-w
+                newim[yoffset:yoffset+h, xoffset:xoffset+w] = image
+                image = newim
+            self.children_full_roi_arr[id_val] = image
             child.update_image(image)
+
             #child.extra_points_linesegs = ([],[])
 
     def update_image_and_drawings(self,
