@@ -22,12 +22,12 @@ class PointDisplayCanvas( vid.DynamicImageCanvas ):
         points,point_colors, linesegs,lineseg_colors = self.extra_points_linesegs
         gl.glColor4f(0.0,1.0,0.0,1.0) # green point
 
-        if point_colors is not None:
-            warnings.warn('point_colors not implemented - all your points will be green for now')
-
         if points is not None:
+            if point_colors is None:
+                point_colors = [ (0,1,0,1) ] * len(points)
             gl.glBegin(gl.GL_POINTS)
-            for pt in points:
+            for color_4tuple,pt in zip(point_colors,points):
+                gl.glColor4f(*color_4tuple)
                 gl.glVertex2f(pt[0],pt[1])
             gl.glEnd()
 
@@ -105,6 +105,12 @@ class DynamicImageCanvas(wx.Panel):
 
     def set_lbrt(self,id_val,lbrt):
         self.lbrt[id_val]=lbrt
+
+    def get_child_canvas(self, id_val):
+        if id_val not in self.children:
+            return None
+        else:
+            return self.children[id_val]
 
     def update_image(self, id_val, image, format='MONO8',
                      xoffset=0, yoffset=0):
