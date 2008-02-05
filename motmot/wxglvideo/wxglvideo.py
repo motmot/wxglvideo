@@ -8,6 +8,8 @@ import pyglet.gl
 #  check off-by-one error in width/coordinate settings (e.g. glOrtho call)
 #  allow sharing of OpenGL context between instances
 
+NewImageReadyEvent = wx.NewEventType() # use to trigger GUI thread action from grab thread
+
 class PygWxContext:
     _gl_begin = False
     _workaround_unpack_row_length = False
@@ -27,6 +29,8 @@ class DynamicImageCanvas(wx.glcanvas.GLCanvas):
     def __init__(self, *args, **kw):
         super(DynamicImageCanvas, self).__init__(*args,**kw)
         self.init = False
+
+        self.Connect( -1, -1, NewImageReadyEvent, self.OnDraw )
 
         self.flip_lr = False
         self.fullcanvas = False
@@ -118,12 +122,15 @@ class DynamicImageCanvas(wx.glcanvas.GLCanvas):
     def update_image(self, image):
         self.wxcontext.SetCurrent()
         self._pygimage.view_new_array( image )
+        event = wx.CommandEvent(NewImageReadyEvent)
+        event.SetEventObject(self)
+        wx.PostEvent(self, event)
 
     def core_draw(self):
         if self._pygimage is not None:
             self._pygimage.blit(0, 0, 0)
 
-    def OnDraw(self):
+    def OnDraw(self,event=None):
         self.wxcontext.SetCurrent()
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
         self.core_draw()
