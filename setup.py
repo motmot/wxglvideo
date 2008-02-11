@@ -13,7 +13,7 @@ This is a subpackage of the motmot family of digital image utilities.
       author_email='strawman@astraw.com',
       install_requires = ['numpy>=1.0.4',
                           'motmot.imops>=0.5.2.dev',
-                          #'pyglet>=1.0', # pyglet egg is broken
+                          'pyglet>=1.0',
                           'wxPython>=2.8',
                           'pygarrayimage>=0.0.2',
                           ],
