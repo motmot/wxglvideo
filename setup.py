@@ -1,7 +1,13 @@
 from setuptools import setup, find_packages
 
 setup(name='motmot.wxglvideo',
-      description='wx/OpenGL viewer of image sequences (part of the motmot camera packages)',
+      description='wx/OpenGL viewer of image sequences',
+      long_description = \
+"""Allows for rapid display and resizing/rotation of images by
+offloading the image operations to OpenGL.
+
+This is a subpackage of the motmot family of digital image utilities.
+""",
       version='0.6.1',
       author='Andrew Straw',
       author_email='strawman@astraw.com',
