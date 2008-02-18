@@ -72,7 +72,7 @@ class DynamicImageCanvas(wx.Panel):
     def _new_child(self,id_val,image):
         child = PointDisplayCanvas(self,-1)
         child.set_fullcanvas(True)
-        self.box.Add( child, 1, wx.EXPAND)
+        self.box.Add( child, 1, wx.EXPAND|wx.ALL, border=1)
         self.Layout()
         pygim = ArrayInterfaceImage( image, allow_copy=False )
         child.new_image( pygim )
@@ -111,6 +111,13 @@ class DynamicImageCanvas(wx.Panel):
             return None
         else:
             return self.children[id_val]
+
+    def delete_image(self,id_val):
+        child = self.children[id_val]
+        child.DestroyChildren()
+        child.Destroy()
+        del self.children[id_val]
+        self.Layout()
 
     def update_image(self, id_val, image, format='MONO8',
                      xoffset=0, yoffset=0):
