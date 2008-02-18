@@ -16,7 +16,18 @@
           <object class="sizeritem">
             <object class="wxStaticText">
               <label>Data:</label>
+              <font>
+                <size>10</size>
+                <family>swiss</family>
+                <style>normal</style>
+                <weight>bold</weight>
+                <underlined>0</underlined>
+                <face>Sans</face>
+                <encoding>UTF-8</encoding>
+              </font>
             </object>
+            <flag>wxALL</flag>
+            <border>5</border>
           </object>
           <object class="sizeritem">
             <object class="wxChoice" name="COLOR">
@@ -48,25 +59,66 @@
           <object class="sizeritem">
             <object class="wxStaticText">
               <label>View:</label>
+              <font>
+                <size>10</size>
+                <family>swiss</family>
+                <style>normal</style>
+                <weight>bold</weight>
+                <underlined>0</underlined>
+                <face>Sans</face>
+                <encoding>UTF-8</encoding>
+              </font>
             </object>
+            <flag>wxALL</flag>
+            <border>5</border>
           </object>
           <object class="sizeritem">
             <object class="wxCheckBox" name="FLIPLR">
               <label>Flip L/R</label>
             </object>
+            <flag>wxALL</flag>
+            <border>5</border>
           </object>
           <object class="sizeritem">
             <object class="wxCheckBox" name="ROTATE180">
               <label>Rotate 180</label>
             </object>
+            <flag>wxALL</flag>
+            <border>5</border>
           </object>
           <object class="sizeritem">
             <object class="wxCheckBox" name="FULLCANVAS">
               <label>Full canvas</label>
               <checked>1</checked>
             </object>
+            <flag>wxALL</flag>
+            <border>5</border>
+          </object>
+          <object class="sizeritem">
+            <object class="wxBoxSizer">
+              <orient>wxVERTICAL</orient>
+            </object>
+            <option>1</option>
+            <flag>wxEXPAND</flag>
+          </object>
+          <object class="sizeritem">
+            <object class="wxButton" name="CLOSE">
+              <label>Close</label>
+              <font>
+                <size>10</size>
+                <family>swiss</family>
+                <style>normal</style>
+                <weight>bold</weight>
+                <underlined>0</underlined>
+                <face>Sans</face>
+                <encoding>UTF-8</encoding>
+              </font>
+            </object>
+            <flag>wxALL|wxALIGN_RIGHT</flag>
+            <border>5</border>
           </object>
         </object>
+        <flag>wxEXPAND</flag>
       </object>
     </object>
   </object>

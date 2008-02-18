@@ -32,6 +32,7 @@ class DemoApp(wx.App):
         wx.EVT_CLOSE(self.frame, self.OnWindowClose)
 
         self.gl_canvases = []
+        self.next_canvas_id = 0
         ID_Timer = wx.NewId()
         self.timer = wx.Timer(self, ID_Timer)
         wx.EVT_TIMER(self, ID_Timer, self.OnTimer)
@@ -39,6 +40,7 @@ class DemoApp(wx.App):
         self.timer.Start(self.update_interval)
 
         self.widgets2canv = {}
+        self.panels_by_canvas = {}
 
         return True
 
@@ -64,6 +66,8 @@ class DemoApp(wx.App):
         finally:
             main_display_panel.Show()
 
+        self.panels_by_canvas[gl_canvas] = new_panel
+
         box.Add(gl_canvas,1,wx.EXPAND)
 
         self.target_panel.Layout()
@@ -88,6 +92,13 @@ class DemoApp(wx.App):
         Which = xrc.XRCCTRL(new_panel,"WHICH")
         self.widgets2canv[Which]=gl_canvas
 
+        ctrl = xrc.XRCCTRL(new_panel,"CLOSE")
+        self.widgets2canv[ctrl]=gl_canvas
+        wx.EVT_BUTTON(ctrl, ctrl.GetId(), self.OnClose)
+
+        canvas_id = self.next_canvas_id
+        gl_canvas.canvas_id = canvas_id
+        self.next_canvas_id += 1
         self.gl_canvases.append( (gl_canvas, Color, Which) )
 
         ni = numpy.random.uniform( 0, 255, SIZE).astype(numpy.uint8)
@@ -110,6 +121,19 @@ class DemoApp(wx.App):
     def OnFullcanvas(self,event):
         gl_canvas = self._event2canvas(event)
         gl_canvas.set_fullcanvas(event.GetEventObject().IsChecked())
+
+    def OnClose(self,event):
+        gl_canvas = self._event2canvas(event)
+        for idx in range(len(self.gl_canvases)):
+            if self.gl_canvases[idx][0] == gl_canvas:
+                break
+
+        del self.gl_canvases[idx]
+
+        panel = self.panels_by_canvas[gl_canvas]
+        panel.DestroyChildren()
+        panel.Destroy()
+        self.target_panel.Layout()
 
     def OnTimer(self, event):
         for (gl_canvas,Color,Which) in self.gl_canvases:
