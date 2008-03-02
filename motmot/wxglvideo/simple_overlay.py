@@ -65,6 +65,8 @@ class DynamicImageCanvas(wx.Panel):
         self.children_full_roi_arr = {}
         self.lbrt = {}
 
+        self.box = wx.BoxSizer(wx.HORIZONTAL)
+        self.SetSizer(self.box)
         #wx.EVT_IDLE( self, self.OnIdle )
 
     def _new_child(self,id_val,image,sort_add=False):
