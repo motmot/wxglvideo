@@ -65,15 +65,11 @@ class DynamicImageCanvas(wx.Panel):
         self.children_full_roi_arr = {}
         self.lbrt = {}
 
-        self.box = wx.BoxSizer(wx.HORIZONTAL)
-        self.SetSizer(self.box)
         #wx.EVT_IDLE( self, self.OnIdle )
 
-    def _new_child(self,id_val,image):
+    def _new_child(self,id_val,image,sort_add=False):
         child = PointDisplayCanvas(self,-1)
         child.set_fullcanvas(True)
-        self.box.Add( child, 1, wx.EXPAND|wx.ALL, border=1)
-        self.Layout()
         pygim = ArrayInterfaceImage( image, allow_copy=False )
         child.new_image( pygim )
         child.set_rotate_180( self.rotate_180 )
@@ -81,6 +77,20 @@ class DynamicImageCanvas(wx.Panel):
 
         self.children[id_val] = child
         self.lbrt[id_val] = ()
+
+        id_vals = self.children.keys()
+        id_vals.sort()
+
+        if sort_add:
+            # maintain ordering
+            self.box = wx.BoxSizer(wx.HORIZONTAL)
+            self.SetSizer(self.box)
+            for id_val in id_vals:
+                child = self.children[id_val]
+                self.box.Add( child, 1, wx.EXPAND|wx.ALL, border=1)
+        else:
+            self.box.Add( child, 1, wx.EXPAND|wx.ALL, border=1)
+        self.Layout()
 
     def set_rotate_180(self, value):
         self.rotate_180 = value
@@ -120,7 +130,7 @@ class DynamicImageCanvas(wx.Panel):
         self.Layout()
 
     def update_image(self, id_val, image, format='MONO8',
-                     xoffset=0, yoffset=0):
+                     xoffset=0, yoffset=0, sort_add=False):
         image=numpy.asarray(image)
         if format == 'RGB8':
             image = imops.rgb8_to_rgb8( image )
@@ -142,7 +152,7 @@ class DynamicImageCanvas(wx.Panel):
         if id_val not in self.children:
             # The line gives us:
             #  Gtk-CRITICAL **: gtk_widget_set_colormap: assertion `!GTK_WIDGET_REALIZED (widget)' failed
-            self._new_child(id_val,image)
+            self._new_child(id_val,image, sort_add=sort_add)
             self.children_full_roi_arr[id_val] = image
         else:
             child = self.children[id_val]
@@ -173,7 +183,8 @@ class DynamicImageCanvas(wx.Panel):
                                   linesegs=None,
                                   lineseg_colors=None,
                                   xoffset=0,
-                                  yoffset=0):
+                                  yoffset=0,
+                                  sort_add=False):
         try:
             child = self.children[id_val]
         except KeyError:
@@ -186,7 +197,8 @@ class DynamicImageCanvas(wx.Panel):
                            image,
                            format=format,
                            xoffset=xoffset,
-                           yoffset=yoffset)
+                           yoffset=yoffset,
+                           sort_add=sort_add)
 
 
     def OnDraw(self):
