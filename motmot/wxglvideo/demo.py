@@ -12,7 +12,9 @@ RESFILE = pkg_resources.resource_filename(__name__,"demo.xrc") # trigger extract
 RES = xrc.EmptyXmlResource()
 RES.LoadFromString(open(RESFILE).read())
 
-SIZE = 32,32,3
+SIZE = 512,256,3
+#SIZE = 320,240,3
+#SIZE = 640,480,3
 
 class DemoApp(wx.App):
 
@@ -36,7 +38,7 @@ class DemoApp(wx.App):
         ID_Timer = wx.NewId()
         self.timer = wx.Timer(self, ID_Timer)
         wx.EVT_TIMER(self, ID_Timer, self.OnTimer)
-        self.update_interval=5 # msec
+        self.update_interval=50 # msec
         self.timer.Start(self.update_interval)
 
         self.widgets2canv = {}
@@ -77,6 +79,11 @@ class DemoApp(wx.App):
         wx.EVT_CHECKBOX(ctrl, ctrl.GetId(), self.OnFlipLR)
         gl_canvas.set_flip_lr(ctrl.IsChecked())
 
+        ctrl = xrc.XRCCTRL(new_panel,"TRANSPOSE")
+        self.widgets2canv[ctrl]=gl_canvas
+        wx.EVT_CHECKBOX(ctrl, ctrl.GetId(), self.OnTranspose)
+        gl_canvas.do_transpose = ctrl.IsChecked()
+
         ctrl = xrc.XRCCTRL(new_panel,"ROTATE180")
         self.widgets2canv[ctrl]=gl_canvas
         wx.EVT_CHECKBOX(ctrl, ctrl.GetId(), self.OnRotate180)
@@ -102,7 +109,8 @@ class DemoApp(wx.App):
         self.gl_canvases.append( (gl_canvas, Color, Which) )
 
         ni = numpy.random.uniform( 0, 255, SIZE).astype(numpy.uint8)
-        pygim = ArrayInterfaceImage(ni,allow_copy=False)
+        #pygim = ArrayInterfaceImage(ni,allow_copy=False)
+        pygim = ArrayInterfaceImage(ni,allow_copy=True)
         gl_canvas.new_image(pygim)
 
     def _event2canvas(self,event):
@@ -113,6 +121,11 @@ class DemoApp(wx.App):
     def OnFlipLR(self,event):
         gl_canvas = self._event2canvas(event)
         gl_canvas.set_flip_lr(event.GetEventObject().IsChecked())
+
+    def OnTranspose(self,event):
+        gl_canvas = self._event2canvas(event)
+        widget = event.GetEventObject()
+        gl_canvas.do_transpose = widget.IsChecked()
 
     def OnRotate180(self,event):
         gl_canvas = self._event2canvas(event)
@@ -155,6 +168,9 @@ class DemoApp(wx.App):
                 pass
             else:
                 raise ValueError('')
+
+            if gl_canvas.do_transpose:
+                my_numpy_array = numpy.transpose(my_numpy_array,axes=[1,0,2])
 
             gl_canvas.update_image( my_numpy_array )
 
