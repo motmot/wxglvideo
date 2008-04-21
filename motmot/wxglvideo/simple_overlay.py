@@ -70,7 +70,11 @@ class DynamicImageCanvas(wx.Panel):
         #wx.EVT_IDLE( self, self.OnIdle )
 
     def _new_child(self,id_val,image,sort_add=False):
-        child = PointDisplayCanvas(self,-1)
+        self.Hide()
+        try:
+            child = PointDisplayCanvas(self,-1)
+        finally:
+            self.Show()
         child.set_fullcanvas(True)
         pygim = ArrayInterfaceImage( image, allow_copy=False )
         child.new_image( pygim )
