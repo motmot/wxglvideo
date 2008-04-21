@@ -36,7 +36,7 @@ class DemoApp(wx.App):
         ID_Timer = wx.NewId()
         self.timer = wx.Timer(self, ID_Timer)
         wx.EVT_TIMER(self, ID_Timer, self.OnTimer)
-        self.update_interval=5 # msec
+        self.update_interval=50 # msec
         self.timer.Start(self.update_interval)
 
         self.widgets2canv = {}
