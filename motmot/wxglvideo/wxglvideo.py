@@ -1,6 +1,7 @@
 # $Id: $
 import wx
 import wx.glcanvas
+import pyglet
 import pyglet.gl as gl
 import pyglet.gl
 
@@ -19,7 +20,12 @@ class PygWxContext:
         pyglet.gl._contexts.append( self )
 
     def SetCurrent(self):
-        pyglet.gl._current_context = self
+        if pyglet.version[:3] >= '1.1':
+            # tested on 1.1beta1
+            pyglet.gl.current_context = self
+        else:
+            # tested on 1.0
+            pyglet.gl._current_context = self
         self.glcanvas.SetCurrent()
 
 class DynamicImageCanvas(wx.glcanvas.GLCanvas):
