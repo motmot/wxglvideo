@@ -28,5 +28,6 @@ This is a subpackage of the motmot family of digital image utilities.
       namespace_packages = ['motmot'],
       package_data = {'motmot.wxglvideo':['demo.xrc']},
       entry_points = {'gui_scripts': ['wxglvideo_demo=motmot.wxglvideo.demo:main',
+                                      'wxglvideo_demo_overlay=motmot.wxglvideo.demo_overlay:main',
                                       ]},
       **kws)
