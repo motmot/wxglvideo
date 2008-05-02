@@ -134,6 +134,8 @@ class DynamicImageCanvas(wx.Panel):
         child.Destroy()
         del self.children[id_val]
         self.Layout()
+        if id_val in self.children_full_roi_arr:
+            del self.children_full_roi_arr[id_val]
 
     def update_image(self, id_val, image, format='MONO8',
                      xoffset=0, yoffset=0, sort_add=False):
@@ -156,8 +158,6 @@ class DynamicImageCanvas(wx.Panel):
             raise ValueError("Unknown format '%s'"%(format,))
 
         if id_val not in self.children:
-            # The line gives us:
-            #  Gtk-CRITICAL **: gtk_widget_set_colormap: assertion `!GTK_WIDGET_REALIZED (widget)' failed
             self._new_child(id_val,image, sort_add=sort_add)
             self.children_full_roi_arr[id_val] = image
         else:
