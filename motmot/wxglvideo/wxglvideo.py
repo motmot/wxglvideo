@@ -33,8 +33,8 @@ class DynamicImageCanvas(wx.glcanvas.GLCanvas):
         self.wxcontext.SetCurrent()
 
     def __init__(self, *args, **kw):
-        attribList = kw.get('attribList',[])
-        attribList.append( wx.glcanvas.WX_GL_DOUBLEBUFFER ) # force double buffering
+        attribList = kw.get('attribList',0)
+        attribList += wx.glcanvas.WX_GL_DOUBLEBUFFER # force double buffering
         kw['attribList']=attribList
         super(DynamicImageCanvas, self).__init__(*args,**kw)
         self.init = False
