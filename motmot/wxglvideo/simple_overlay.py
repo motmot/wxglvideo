@@ -56,6 +56,11 @@ class PointDisplayCanvas( vid.DynamicImageCanvas ):
 
 class DynamicImageCanvas(wx.Panel):
     def __init__(self,*args,**kw):
+        if 'child_kwargs' in kw:
+            self.child_kwargs=kw['child_kwargs']
+            del kw['child_kwargs']
+        else:
+            self.child_kwargs=None
         super(DynamicImageCanvas, self).__init__(*args,**kw)
 
         self.rotate_180 = False
@@ -72,7 +77,11 @@ class DynamicImageCanvas(wx.Panel):
     def _new_child(self,id_val,image,sort_add=False):
         self.Hide()
         try:
-            child = PointDisplayCanvas(self,-1)
+            if self.child_kwargs is None:
+                kws = {}
+            else:
+                kws = self.child_kwargs
+            child = PointDisplayCanvas(self,-1,**kws)
         finally:
             self.Show()
         child.set_fullcanvas(True)
