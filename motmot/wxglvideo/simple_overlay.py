@@ -34,12 +34,12 @@ class PointDisplayCanvas( vid.DynamicImageCanvas ):
         if linesegs is not None:
             if lineseg_colors is None:
                 lineseg_colors = [ (0,1,0,1) ] * len(linesegs)
-            gl.glBegin(gl.GL_LINES)
-            for color_4tuple,(x0,y0,x1,y1) in zip(lineseg_colors,linesegs):
+            for color_4tuple,this_lineseg in zip(lineseg_colors,linesegs):
+                gl.glBegin(gl.GL_LINE_STRIP)
                 gl.glColor4f(*color_4tuple)
-                gl.glVertex2f(x0,y0)
-                gl.glVertex2f(x1,y1)
-            gl.glEnd()
+                for (x,y) in zip(this_lineseg[0::2],this_lineseg[1::2]):
+                    gl.glVertex2f(x,y)
+                gl.glEnd()
 
         if self.red_points is not None:
             gl.glColor4f(1.0,0.0,0.0,1.0)
