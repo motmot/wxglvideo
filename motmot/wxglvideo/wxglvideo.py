@@ -35,7 +35,10 @@ class DynamicImageCanvas(wx.glcanvas.GLCanvas):
     def __init__(self, *args, **kw):
         attribList = kw.get('attribList',None)
         if attribList is None:
-            attribList = [wx.glcanvas.WX_GL_DOUBLEBUFFER] # force double buffering
+            attribList = [
+                wx.glcanvas.WX_GL_RGBA,
+                wx.glcanvas.WX_GL_DOUBLEBUFFER, # force double buffering
+                wx.glcanvas.WX_GL_DEPTH_SIZE, 16,]
         kw['attribList']=attribList
         super(DynamicImageCanvas, self).__init__(*args,**kw)
         self.init = False
