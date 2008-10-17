@@ -42,7 +42,7 @@ class PointDisplayCanvas( vid.DynamicImageCanvas ):
                 gl.glEnd()
 
         if self.red_points is not None:
-            gl.glColor4f(1.0,0.0,0.0,1.0)
+            gl.glColor4f(1.0,0.0,0.0,0.5) # 50% alpha
             gl.glBegin(gl.GL_POINTS)
             for pt in self.red_points:
                 gl.glVertex2f(pt[0],pt[1])
@@ -180,8 +180,6 @@ class DynamicImageCanvas(wx.Panel):
                 # to blit is width of full texture, so here we make a
                 # full-size image rather than blitting the sub image.
                 newim = numpy.array(previous_image,copy=True)
-                yoffset = fullh-yoffset-h
-                xoffset = fullw-xoffset-w
                 newim[yoffset:yoffset+h, xoffset:xoffset+w] = image
                 image = newim
             self.children_full_roi_arr[id_val] = image
