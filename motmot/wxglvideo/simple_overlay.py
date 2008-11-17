@@ -54,6 +54,15 @@ class PointDisplayCanvas( vid.DynamicImageCanvas ):
         gl.glEnable( gl.GL_POINT_SMOOTH )
         gl.glPointSize(5)
 
+def copy_array_including_strides(arr):
+    arr = numpy.asarray(arr)
+    if arr.ndim!=2:
+        raise NotImplementedError('only 2D arrays currently supported')
+    newarr_full = numpy.empty( (arr.shape[0], arr.strides[0]), dtype=arr.dtype)
+    newarr_full[:arr.shape[0],:arr.shape[1]]=arr
+    newarr_view = newarr_full[:arr.shape[0],:arr.shape[1]]
+    return newarr_view
+
 class DynamicImageCanvas(wx.Panel):
     def __init__(self,*args,**kw):
         if 'child_kwargs' in kw:
@@ -179,7 +188,7 @@ class DynamicImageCanvas(wx.Panel):
                 # Current pyglet (v1.0) seems to assume width of image
                 # to blit is width of full texture, so here we make a
                 # full-size image rather than blitting the sub image.
-                newim = numpy.array(previous_image,copy=True)
+                newim = copy_array_including_strides(previous_image)
                 newim[yoffset:yoffset+h, xoffset:xoffset+w] = image
                 image = newim
             self.children_full_roi_arr[id_val] = image
