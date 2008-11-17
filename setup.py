@@ -4,11 +4,11 @@ import os
 kws = {}
 if not int(os.getenv( 'DISABLE_INSTALL_REQUIRES','0' )):
     kws['install_requires'] = ['numpy>=1.0.4',
-                          'motmot.imops>=0.5.2.dev',
-                          'pyglet>=1.0',
-                          'wxPython>=2.8',
-                          'pygarrayimage>=0.0.2',
-                          ],
+                               'motmot.imops>=0.5.2.dev',
+                               'pyglet>=1.0',
+                               'wxPython>=2.8',
+                               'pygarrayimage>=0.0.2',
+                               ]
 
 setup(name='motmot.wxglvideo',
       description='wx/OpenGL viewer of image sequences',
