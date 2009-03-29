@@ -5,3 +5,4 @@ entry_points.txt
 namespace_packages.txt
 top_level.txt
 zip-safe
+requires.txt
