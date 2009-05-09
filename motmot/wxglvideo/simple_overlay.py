@@ -172,6 +172,9 @@ class DynamicImageCanvas(wx.Panel):
             pass
         elif format == 'MONO16':
             image = imops.mono16_to_mono8_middle8bits( image )
+        elif format.startswith('MONO8:'):
+            warnings.warn('no Bayer do-mosaicing code implemented.')
+            # pass through the raw Bayer mosaic
         else:
             raise ValueError("Unknown format '%s'"%(format,))
 
