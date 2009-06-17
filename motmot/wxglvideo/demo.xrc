@@ -23,7 +23,6 @@
                 <weight>bold</weight>
                 <underlined>0</underlined>
                 <face>Sans</face>
-                <encoding>UTF-8</encoding>
               </font>
             </object>
             <flag>wxALL</flag>
@@ -66,7 +65,6 @@
                 <weight>bold</weight>
                 <underlined>0</underlined>
                 <face>Sans</face>
-                <encoding>UTF-8</encoding>
               </font>
             </object>
             <flag>wxALL</flag>
@@ -111,7 +109,6 @@
                 <weight>bold</weight>
                 <underlined>0</underlined>
                 <face>Sans</face>
-                <encoding>UTF-8</encoding>
               </font>
             </object>
             <flag>wxALL|wxALIGN_RIGHT</flag>
