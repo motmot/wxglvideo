@@ -20,6 +20,7 @@ class PygWxContext:
         pyglet.gl._contexts.append( self )
 
     def SetCurrent(self):
+        self.glcanvas.GetParent().Show()
         if pyglet.version[:3] >= '1.1':
             # tested on 1.1beta1
             pyglet.gl.current_context = self
