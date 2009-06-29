@@ -2,7 +2,9 @@ import wx
 import wx.xrc as xrc
 import pkg_resources
 import numpy
+import numpy as np
 import motmot.imops.imops as imops
+import pyglet
 import pyglet.gl as gl
 import warnings
 
@@ -235,6 +237,19 @@ class DynamicImageCanvas(wx.Panel):
                            sort_add=sort_add)
     update_image_and_drawings.__doc__ = wxvideo.DynamicImageCanvas.update_image_and_drawings.__doc__
 
+    def get_canvas_copy(self,pyglet_format='RGB'):
+        if 1:
+            raise NotImplementedError('get_canvas_copy() does not yet work')
+        self.OnDraw() # make sure we're up to date
+        color_buffer = pyglet.image.get_buffer_manager().get_color_buffer()
+        texture = color_buffer.get_texture()
+        buffer = texture.image_data
+        bpp = len(pyglet_format)
+        data = buffer.get_data(pyglet_format,buffer.width*bpp)
+        arr = np.frombuffer(data,dtype=np.uint8)
+        arr = np.array_split(arr, buffer.height, axis=0)
+        arr = np.array(arr)
+        return arr
 
     def OnDraw(self):
         for id_val in self.children:
