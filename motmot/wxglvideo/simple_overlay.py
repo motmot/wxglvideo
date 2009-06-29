@@ -12,9 +12,9 @@ import motmot.wxglvideo.wxglvideo as vid
 
 class PointDisplayCanvas( vid.DynamicImageCanvas ):
     def __init__(self,*args,**kw):
-        super(PointDisplayCanvas, self).__init__(*args,**kw)
         self.extra_points_linesegs = None, None, None, None
         self.red_points = None
+        super(PointDisplayCanvas, self).__init__(*args,**kw)
 
     def core_draw(self):
         super(PointDisplayCanvas, self).core_draw()
