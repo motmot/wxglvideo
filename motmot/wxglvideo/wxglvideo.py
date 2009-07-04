@@ -61,7 +61,7 @@ class DynamicImageCanvas(wx.glcanvas.GLCanvas):
     def OnEraseBackground(self, event):
         pass # Do nothing, to avoid flashing on MSW. (inhereted from wxDemo)
 
-    def set_flip_lr(self,value):
+    def set_flip_LR(self,value):
         self.flip_lr = value
         self._reset_projection()
     def set_fullcanvas(self,value):

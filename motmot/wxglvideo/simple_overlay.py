@@ -97,7 +97,7 @@ class DynamicImageCanvas(wx.Panel):
         pygim = ArrayInterfaceImage( image, allow_copy=False )
         child.new_image( pygim )
         child.set_rotate_180( self.rotate_180 )
-        child.set_flip_lr( self.flip_lr )
+        child.set_flip_LR( self.flip_lr )
 
         self.children[id_val] = child
         self.lbrt[id_val] = ()
@@ -126,7 +126,7 @@ class DynamicImageCanvas(wx.Panel):
         self.flip_lr = value
         for id_val in self.children:
             child = self.children[id_val]
-            child.set_flip_lr(value)
+            child.set_flip_LR(value)
 
     def set_red_points(self,id_val,points):
         try:
