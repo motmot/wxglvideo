@@ -9,8 +9,10 @@ import warnings
 from pygarrayimage.arrayimage import ArrayInterfaceImage
 
 import motmot.wxglvideo.wxglvideo as vid
+import motmot.wxvideo.wxvideo as wxvideo
 
 class PointDisplayCanvas( vid.DynamicImageCanvas ):
+    """A single image view with overlaid points and line segments"""
     def __init__(self,*args,**kw):
         self.extra_points_linesegs = None, None, None, None
         self.red_points = None
@@ -55,6 +57,7 @@ class PointDisplayCanvas( vid.DynamicImageCanvas ):
         gl.glPointSize(5)
 
 def copy_array_including_strides(arr):
+    """copy a numpy array, including the strides"""
     arr = numpy.asarray(arr)
     if arr.ndim!=2:
         raise NotImplementedError('only 2D arrays currently supported')
@@ -64,6 +67,10 @@ def copy_array_including_strides(arr):
     return newarr_view
 
 class DynamicImageCanvas(wx.Panel):
+    """This class mimics the behavior of
+    :class:`motmot.wxvideo.wxvideo.DynamicImageCanvas`, allowing
+    multiple image sources and the simple overlay of points and
+    lines."""
     def __init__(self,*args,**kw):
         if 'child_kwargs' in kw:
             self.child_kwargs=kw['child_kwargs']
@@ -121,12 +128,14 @@ class DynamicImageCanvas(wx.Panel):
         for id_val in self.children:
             child = self.children[id_val]
             child.set_rotate_180(value)
+    set_rotate_180.__doc__ = wxvideo.DynamicImageCanvas.set_rotate_180.__doc__
 
     def set_flip_LR(self, value):
         self.flip_lr = value
         for id_val in self.children:
             child = self.children[id_val]
             child.set_flip_LR(value)
+    set_flip_LR.__doc__ = wxvideo.DynamicImageCanvas.set_flip_LR.__doc__
 
     def set_red_points(self,id_val,points):
         try:
@@ -224,6 +233,7 @@ class DynamicImageCanvas(wx.Panel):
                            xoffset=xoffset,
                            yoffset=yoffset,
                            sort_add=sort_add)
+    update_image_and_drawings.__doc__ = wxvideo.DynamicImageCanvas.update_image_and_drawings.__doc__
 
 
     def OnDraw(self):

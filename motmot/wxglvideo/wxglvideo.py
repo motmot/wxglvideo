@@ -1,9 +1,9 @@
-# $Id: $
 import wx
 import wx.glcanvas
 import pyglet
 import pyglet.gl as gl
 import pyglet.gl
+import motmot.wxvideo.wxvideo as wxvideo
 
 # XXX TODO:
 #  check off-by-one error in width/coordinate settings (e.g. glOrtho call)
@@ -30,6 +30,7 @@ class PygWxContext:
         self.glcanvas.SetCurrent()
 
 class DynamicImageCanvas(wx.glcanvas.GLCanvas):
+    """Display image data to OpenGL using as few resources as possible"""
     def _setcurrent(self,hack_ok=True):
         self.wxcontext.SetCurrent()
 
@@ -64,12 +65,16 @@ class DynamicImageCanvas(wx.glcanvas.GLCanvas):
     def set_flip_LR(self,value):
         self.flip_lr = value
         self._reset_projection()
+    set_flip_LR.__doc__ = wxvideo.DynamicImageCanvas.set_flip_LR.__doc__
+
     def set_fullcanvas(self,value):
         self.fullcanvas = value
         self._reset_projection()
+
     def set_rotate_180(self,value):
         self.rotate_180 = value
         self._reset_projection()
+    set_rotate_180.__doc__ = wxvideo.DynamicImageCanvas.set_rotate_180.__doc__
 
     def OnSize(self, event):
         size = self.GetClientSize()
@@ -134,6 +139,7 @@ class DynamicImageCanvas(wx.glcanvas.GLCanvas):
         self._reset_projection() # always trigger re-calculation of projection - necessary if self.fullcanvas
 
     def update_image(self, image):
+        """update the image to be displayed"""
         self.wxcontext.SetCurrent()
         self._pygimage.view_new_array( image )
         event = wx.CommandEvent(NewImageReadyEvent)
