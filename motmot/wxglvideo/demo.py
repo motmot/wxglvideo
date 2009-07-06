@@ -75,7 +75,7 @@ class DemoApp(wx.App):
         ctrl = xrc.XRCCTRL(new_panel,"FLIPLR")
         self.widgets2canv[ctrl]=gl_canvas
         wx.EVT_CHECKBOX(ctrl, ctrl.GetId(), self.OnFlipLR)
-        gl_canvas.set_flip_lr(ctrl.IsChecked())
+        gl_canvas.set_flip_LR(ctrl.IsChecked())
 
         ctrl = xrc.XRCCTRL(new_panel,"ROTATE180")
         self.widgets2canv[ctrl]=gl_canvas
