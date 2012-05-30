@@ -11,7 +11,7 @@ offloading the image operations to OpenGL.
 
 This is a subpackage of the motmot family of digital image utilities.
 """,
-      version='0.6.6',
+      version='0.6.7',
       author='Andrew Straw',
       author_email='strawman@astraw.com',
       url='http://code.astraw.com/projects/motmot',
